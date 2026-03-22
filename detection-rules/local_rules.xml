@@ -1,0 +1,138 @@
+<!-- ================================================== -->
+<!-- CUSTOM SIEM HOME LAB DETECTION RULES               -->
+<!-- Each rule mapped to MITRE ATT&CK framework          -->
+<!-- ================================================== -->
+
+<group name="custom_siem_lab,">
+
+  <!-- ============================================ -->
+  <!-- ATTACK 1: Port Scan Detection                -->
+  <!-- MITRE ATT&CK: T1046 (Network Service Scan)  -->
+  <!-- ============================================ -->
+
+  <rule id="100001" level="8">
+    <if_sid>86601</if_sid>
+    <description>MITRE T1046: Network port scan detected by Suricata from $(srcip)</description>
+    <mitre>
+      <id>T1046</id>
+    </mitre>
+    <group>network_scan,reconnaissance,</group>
+  </rule>
+
+  <rule id="100010" level="10" frequency="15" timeframe="120">
+    <if_matched_sid>86601</if_matched_sid>
+    <description>MITRE T1046: Aggressive network scanning detected from $(srcip) — 15+ alerts in 2 minutes</description>
+    <mitre>
+      <id>T1046</id>
+    </mitre>
+    <group>network_scan,reconnaissance,high_frequency,</group>
+  </rule>
+
+  <!-- ============================================ -->
+  <!-- ATTACK 2: SSH Brute Force                    -->
+  <!-- MITRE ATT&CK: T1110.001 (Password Guessing) -->
+  <!-- ============================================ -->
+
+  <rule id="100002" level="10" frequency="5" timeframe="60">
+    <if_matched_sid>5760</if_matched_sid>
+    <description>MITRE T1110.001: SSH brute force attack detected from $(srcip) — 5+ failures in 60 seconds</description>
+    <mitre>
+      <id>T1110.001</id>
+    </mitre>
+    <group>authentication_failures,brute_force,</group>
+  </rule>
+
+  <rule id="100011" level="12" frequency="10" timeframe="120">
+    <if_matched_sid>5760</if_matched_sid>
+    <description>MITRE T1110.001: HIGH CONFIDENCE SSH brute force from $(srcip) — 10+ failures in 2 minutes</description>
+    <mitre>
+      <id>T1110.001</id>
+    </mitre>
+    <group>authentication_failures,brute_force,critical,</group>
+  </rule>
+
+  <rule id="100003" level="14">
+    <if_matched_sid>100002</if_matched_sid>
+    <description>CRITICAL: Successful SSH login after brute force from $(srcip) — account likely compromised</description>
+    <mitre>
+      <id>T1110.001</id>
+      <id>T1078</id>
+    </mitre>
+    <group>brute_force,authentication_success,compromise,</group>
+  </rule>
+
+  <!-- ============================================ -->
+  <!-- ATTACK 3: Web Application Attacks            -->
+  <!-- MITRE ATT&CK: T1190 (Exploit Public App)    -->
+  <!-- ============================================ -->
+
+  <rule id="100004" level="12">
+    <if_sid>31100</if_sid>
+    <url>..|/etc/passwd|/etc/shadow|/proc/self</url>
+    <description>MITRE T1190: Directory traversal attempt detected from $(srcip)</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+    <group>web_attack,directory_traversal,</group>
+  </rule>
+
+  <rule id="100005" level="10" frequency="30" timeframe="60">
+    <if_matched_sid>31100</if_matched_sid>
+    <description>MITRE T1595.002: Web vulnerability scanning detected from $(srcip) — 30+ requests in 60s</description>
+    <mitre>
+      <id>T1595.002</id>
+    </mitre>
+    <group>web_attack,web_scan,</group>
+  </rule>
+
+  <!-- ============================================ -->
+  <!-- ATTACK 4: Privilege Escalation               -->
+  <!-- MITRE ATT&CK: T1548.003 (Sudo Abuse)        -->
+  <!-- ============================================ -->
+
+  <rule id="100006" level="12">
+    <if_sid>5405</if_sid>
+    <description>MITRE T1548.003: Unauthorized sudo attempt by user — not in sudoers file</description>
+    <mitre>
+      <id>T1548.003</id>
+    </mitre>
+    <group>privilege_escalation,sudo_abuse,</group>
+  </rule>
+
+  <rule id="100007" level="8">
+    <if_sid>80700</if_sid>
+    <field name="audit.key">recon</field>
+    <description>MITRE T1083: System enumeration/reconnaissance tool executed</description>
+    <mitre>
+      <id>T1083</id>
+    </mitre>
+    <group>privilege_escalation,enumeration,</group>
+  </rule>
+
+  <!-- ============================================ -->
+  <!-- ATTACK 5: Data Exfiltration                  -->
+  <!-- MITRE ATT&CK: T1041 (Exfil Over C2)         -->
+  <!-- ============================================ -->
+
+  <rule id="100008" level="13">
+    <if_sid>80700</if_sid>
+    <field name="audit.key">suspicious_tool</field>
+    <field name="audit.command">nc|ncat|netcat</field>
+    <description>MITRE T1041: Netcat execution detected — possible data exfiltration</description>
+    <mitre>
+      <id>T1041</id>
+    </mitre>
+    <group>data_exfiltration,suspicious_tool,</group>
+  </rule>
+
+  <rule id="100009" level="10">
+    <if_sid>80700</if_sid>
+    <field name="audit.key">network_connect</field>
+    <description>MITRE T1041: Outbound network connection initiated — review for data exfiltration</description>
+    <mitre>
+      <id>T1041</id>
+    </mitre>
+    <group>data_exfiltration,network_anomaly,</group>
+  </rule>
+
+</group>

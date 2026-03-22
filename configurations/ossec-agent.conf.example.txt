@@ -1,0 +1,48 @@
+<!-- ================================================== -->
+<!-- Wazuh Agent Configuration (ossec.conf) - Example   -->
+<!-- Target Machine: 192.168.56.11                      -->
+<!-- NOTE: Replace MANAGER_IP with your Wazuh server IP -->
+<!-- ================================================== -->
+
+<ossec_config>
+
+  <!-- Agent connection to Wazuh Manager -->
+  <client>
+    <server>
+      <address>MANAGER_IP</address>
+      <port>1514</port>
+      <protocol>tcp</protocol>
+    </server>
+  </client>
+
+  <!-- Suricata Log Monitoring -->
+  <localfile>
+    <log_format>json</log_format>
+    <location>/var/log/suricata/eve.json</location>
+  </localfile>
+
+  <!-- Apache Access Log -->
+  <localfile>
+    <log_format>apache</log_format>
+    <location>/var/log/apache2/access.log</location>
+  </localfile>
+
+  <!-- Apache Error Log -->
+  <localfile>
+    <log_format>apache</log_format>
+    <location>/var/log/apache2/error.log</location>
+  </localfile>
+
+  <!-- Auth Log (SSH, sudo events) -->
+  <localfile>
+    <log_format>syslog</log_format>
+    <location>/var/log/auth.log</location>
+  </localfile>
+
+  <!-- Audit Log (auditd events) -->
+  <localfile>
+    <log_format>audit</log_format>
+    <location>/var/log/audit/audit.log</location>
+  </localfile>
+
+</ossec_config>
