@@ -191,14 +191,6 @@ siem-homelab-detection-response/
 │   └── ossec-agent.conf.example
 ├── attack-simulations/
 │   └── attack-playbook.md
-├── screenshots/
-│   ├── 01-dashboard-overview.png
-│   ├── 02-mitre-attack-mapping.png
-│   ├── 03-brute-force-alerts.png
-│   ├── 04-port-scan-detection.png
-│   ├── 05-active-response-ip-block.png
-│   ├── 06-custom-notification-log.png
-│   └── 07-attack-timeline.png
 └── docs/
     └── detection-rule-mapping.md
 ```
