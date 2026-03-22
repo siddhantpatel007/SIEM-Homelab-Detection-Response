@@ -64,7 +64,6 @@ abc123
 monkey
 dragon
 master
-password123
 EOF
 ```
 
@@ -75,7 +74,6 @@ hydra -l testuser -P /tmp/passwords.txt ssh://192.168.56.11 -t 4 -V -f
 
 **Results:**
 - Hydra tested 12 passwords against the testuser account
-- Successfully cracked the password: `password123`
 - 11 failed login attempts followed by 1 successful login
 
 **Detection:**
